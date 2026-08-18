@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   DefaultValues,
   FieldValues,
@@ -8,9 +8,29 @@ import {
   useForm,
   UseFormReturn,
   SubmitHandler,
+  Controller,
 } from "react-hook-form";
-import { ZodType } from 'zod'
+
+import { ZodType } from "zod";
 import { Button } from "./ui/button";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "./ui/field";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Input } from "./ui/input";
+import { FIELD_NAMES } from "@/constants";
+import Link from "next/link";
+import ImageUpload from "./imageUpload";
 
 interface Props<T extends FieldValues> {
   schema: ZodType<T>;
@@ -19,98 +39,104 @@ interface Props<T extends FieldValues> {
   type: "SIGN_IN" | "SIGN_UP";
 }
 
-const AuthForm = <T extends FieldValues>({ type, schema, defaultValues, onSubmit }: Props<T>) => {
+const AuthForm = <T extends FieldValues>({
+  type,
+  schema,
+  defaultValues,
+  onSubmit,
+}: Props<T>) => {
   const form: UseFormReturn<T> = useForm<T>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
-  })
+  });
 
   const handleSubmit: SubmitHandler<T> = async (data: T) => {
     await onSubmit(data);
-  }
+  };
 
   const isSignIn = type === "SIGN_IN";
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="auth-form">
-      <div className="flex flex-col gap-4">
-        {!isSignIn && (
-          <>
-            <label htmlFor="fullname" className="text-sm font-medium text-dark-300">
-              Full Name
-            </label>
-            <input
-              id="fullname"
-              type="text"
-              placeholder="Enter your full name"
-              {...form.register("fullname" as Path<T>)}
-              className="auth-input"
-            />
-          </>
-        )}
-
-        <label htmlFor="email" className="text-sm font-medium text-dark-300">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          placeholder="Enter your email"
-          {...form.register("email" as Path<T>)}
-          className="auth-input"
-        />
-
-        <label htmlFor="password" className="text-sm font-medium text-dark-300">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Enter your password"
-          {...form.register("password" as Path<T>)}
-          className="auth-input"
-        />
-
-        {!isSignIn && (
-          <>
-            <label htmlFor="universityId" className="text-sm font-medium text-dark-300">
-              University ID
-            </label>
-            <input
-              id="universityId"
-              type="number"
-              placeholder="Enter your university ID"
-              {...form.register("universityId" as Path<T>)}
-              className="auth-input"
-            />
-
-            <label htmlFor="universityCard" className="text-sm font-medium text-dark-300">
-              University Card
-            </label>
-            <input
-              id="universityCard"
-              type="text"
-              placeholder="Enter your university card"
-              {...form.register("universityCard" as Path<T>)}
-              className="auth-input"
-            />
-          </>
-        )}
-      </div>
-
-      <Button
-        type="submit"
-        className="auth-button mt-6"
-        disabled={form.formState.isSubmitting}
+    <div className=" flex flex-col gap-4">
+      <h1 className="font-semibold text-white text-2xl">
+        {!isSignIn ? "Welcome Back to Bookish" : "Create an account"}
+      </h1>
+      <h3 className="font-semibold">
+        {isSignIn
+          ? "Sign In to avail the various services by Bookish"
+          : "Enter following details allong with Id card to register in Bookish"}
+      </h3>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-6 w-full"
       >
-        {form.formState.isSubmitting
-          ? "Please wait..."
-          : isSignIn
-            ? "Sign In"
-            : "Sign Up"}
-      </Button>
-    </form>
-  )
-}
+        <FieldGroup>
+          {(Object.keys(defaultValues) as Array<Path<T>>).map((val) => (
+            <Controller
+              key={val}
+              name={val}
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={val} className="font-light">
+                    {FIELD_NAMES[val]}
+                  </FieldLabel>
 
-export default AuthForm
+                  <Input
+                    className=""
+                    {...field}
+                    id={val}
+                    aria-invalid={fieldState.invalid}
+                    autoComplete="off"
+                  />
+                  <FieldDescription>{}</FieldDescription>
+                  {fieldState.invalid && (
+                    <FieldError
+                      className="font-light "
+                      errors={[fieldState.error]}
+                    />
+                  )}
+                </Field>
+              )}
+            />
+          ))}
+        </FieldGroup>
+
+        {!isSignIn && <ImageUpload></ImageUpload>}
+        <Button
+          type="submit"
+          className="auth-button mt-6"
+          disabled={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting
+            ? "Please wait..."
+            : isSignIn
+              ? "Sign In"
+              : "Sign Up"}
+        </Button>
+        <div className="flex justify-center gap-2">
+          {isSignIn ? (
+            <>
+              <p>Don't have an Account ?</p>
+              <Link className="text-blue-100" href="/sign-up">
+                {" "}
+                Sign Up
+              </Link>
+            </>
+          ) : (
+            <>
+              {" "}
+              <p>Already have an Account ?</p>
+              <Link className="text-blue-100" href="/sign-in">
+                {" "}
+                Sign In
+              </Link>
+            </>
+          )}
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default AuthForm;

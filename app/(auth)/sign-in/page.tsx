@@ -1,3 +1,4 @@
+'use client'
 import AuthForm from "@/components/authForm";
 import { signInSchema } from "@/lib/validations";
 

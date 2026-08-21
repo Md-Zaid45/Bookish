@@ -3,7 +3,9 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-const Header = () => {
+import { Avatar, AvatarFallback,AvatarImage } from "./ui/avatar";
+import { Session } from "next-auth";
+const Header = ({session}:{session:Session}) => {
   const pathname = usePathname();
   return (
     <header className="flex justify-between gap-5 mt-10">
@@ -43,13 +45,15 @@ const Header = () => {
         </li>
         <li>
           <Link
-            href="/"
+            href="/my-profile"
             className={cn(
               `cursor-pointer text-base capitalize `,
               pathname == "/profile" ? "text-light-200" : "text-light-100",
             )}
           >
-            Profile
+            <Avatar>
+              <AvatarFallback>{session?.user?.name}</AvatarFallback>
+            </Avatar>
           </Link>
         </li>
       </ul>

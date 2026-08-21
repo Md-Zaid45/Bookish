@@ -28,9 +28,11 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Input } from "./ui/input";
-import { FIELD_NAMES } from "@/constants";
+import { FIELD_NAMES, FIELD_TYPES } from "@/constants";
 import Link from "next/link";
 import ImageUpload from "./imageUpload";
+import { toast } from "./ui/toast";
+import { useRouter } from "next/navigation";
 
 interface Props<T extends FieldValues> {
   schema: ZodType<T>;
@@ -50,16 +52,30 @@ const AuthForm = <T extends FieldValues>({
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
-  const handleSubmit: SubmitHandler<T> = async (data: T) => {
-    await onSubmit(data);
-  };
-
+  const router = useRouter()
   const isSignIn = type === "SIGN_IN";
 
+  const handleSubmit: SubmitHandler<T> = async (data: T) => {
+    const result = await onSubmit(data);
+    if(result?.success){
+      toast.add({title:'Success', description: isSignIn?'You have succcessfully signed in':'You have succcessfully signed up'})
+          router.push('/')
+
+    }
+    else{
+      toast.add({
+        title:`Error ${isSignIn? "signing in": "signing up"}`,
+        description:`${result.error}`,
+        variant:'destructive'
+      })
+    }
+  };
+
+
   return (
-    <div className=" flex flex-col gap-4">
+    <div className=" flex flex-col gap-4 max-w-90 ">
       <h1 className="font-semibold text-white text-2xl">
-        {!isSignIn ? "Welcome Back to Bookish" : "Create an account"}
+        {isSignIn ? "Welcome Back to Bookish" : "Create an account"}
       </h1>
       <h3 className="font-semibold">
         {isSignIn
@@ -82,17 +98,22 @@ const AuthForm = <T extends FieldValues>({
                     {FIELD_NAMES[val]}
                   </FieldLabel>
 
-                  <Input
-                    className=""
-                    {...field}
-                    id={val}
-                    aria-invalid={fieldState.invalid}
-                    autoComplete="off"
-                  />
-                  <FieldDescription>{}</FieldDescription>
+                  {val != "universityCard" ? (
+                    <Input
+                      className="form-input"
+                      required
+                      type={FIELD_TYPES[field.name as keyof typeof FIELD_TYPES]}
+                      {...field}
+                      id={val}
+                      aria-invalid={fieldState.invalid}
+                      autoComplete="off"
+                    />
+                  ) : (
+                    <>{!isSignIn && <ImageUpload onUpload={(url) => field.onChange(url)} />}</>
+                  )}
                   {fieldState.invalid && (
                     <FieldError
-                      className="font-light "
+                      className="font-semibold text-xs "
                       errors={[fieldState.error]}
                     />
                   )}
@@ -102,10 +123,9 @@ const AuthForm = <T extends FieldValues>({
           ))}
         </FieldGroup>
 
-        {!isSignIn && <ImageUpload></ImageUpload>}
         <Button
           type="submit"
-          className="auth-button mt-6"
+          className="auth-button mt-6 w-27"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting

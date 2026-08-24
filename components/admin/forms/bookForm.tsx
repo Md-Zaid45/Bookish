@@ -13,6 +13,8 @@ import { bookSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
+import ColorPicker from "../colorPicker";
+import createBook from "@/lib/admin/actions/book";
 
 interface Props extends Partial<Book> {
   type?: "create" | "update";
@@ -35,7 +37,9 @@ const BookForm = ({ type }: Props) => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof bookSchema>) => {};
+  const onSubmit = async (values: z.infer<typeof bookSchema>) => {
+    const res=await createBook(values)
+  };
   return (
     <div className="">
       <form onSubmit={form.handleSubmit(onSubmit)} className="">
@@ -207,39 +211,17 @@ const BookForm = ({ type }: Props) => {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel className="text-base font-normal text-dark-500">
-                  Cover Image
+                  Uplade the book cover image
                 </FieldLabel>
 
-                <Input
-                  className="book-form_input"
-                  required
-                  {...field}
-                  min={1}
-                  max={5}
-                  placeholder="Image"
-                  aria-invalid={fieldState.invalid}
-                  autoComplete="off"
+                <ImageUpload
+                  type="file"
+                  placeholder="Uplade the book cover image"
+                  accept="image/*"
+                  onFileUplload={field.onChange}
+                  variant="light"
                 />
-                {fieldState.invalid && (
-                  <FieldError
-                    className="font-semibold text-xs "
-                    errors={[fieldState.error]}
-                  />
-                )}
-              </Field>
-            )}
-          />
 
-            <Controller
-            name="coverUrl"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel className="text-base font-normal text-dark-500">
-                  Cover Image
-                </FieldLabel>
-
-                <ImageUpload  />
                 {fieldState.invalid && (
                   <FieldError
                     className="font-semibold text-xs "
@@ -259,14 +241,7 @@ const BookForm = ({ type }: Props) => {
                   Cover color
                 </FieldLabel>
 
-                <Input
-                  className="book-form_input"
-                  required
-                  {...field}
-                  placeholder="Pick a cover color"
-                  aria-invalid={fieldState.invalid}
-                  autoComplete="off"
-                />
+                <ColorPicker value={field.value} onPickerChnage={field.onChange}/>
                 {fieldState.invalid && (
                   <FieldError
                     className="font-semibold text-xs "
@@ -283,18 +258,15 @@ const BookForm = ({ type }: Props) => {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel className="text-base font-normal text-dark-500">
-                  Video
+                  Upload book trailer video
                 </FieldLabel>
 
-                <Input
-                  className="book-form_input"
-                  required
-                  {...field}
-                  min={1}
-                  max={5}
-                  placeholder="Video"
-                  aria-invalid={fieldState.invalid}
-                  autoComplete="off"
+                <ImageUpload
+                  type="file"
+                  accept="video/*"
+                  placeholder="Upload book trailer video"
+                  variant="light"
+                  onFileUplload={field.onChange}
                 />
                 {fieldState.invalid && (
                   <FieldError
@@ -333,7 +305,9 @@ const BookForm = ({ type }: Props) => {
             )}
           />
         </FieldGroup>
-        <Button type="submit" className='mt-5 text-white book-form_btn bg-'>Add book to Library</Button>
+        <Button type="submit" className="mt-5 text-white book-form_btn bg-">
+          Add book to Library
+        </Button>
       </form>
     </div>
   );

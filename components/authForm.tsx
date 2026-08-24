@@ -109,7 +109,7 @@ const AuthForm = <T extends FieldValues>({
                       autoComplete="off"
                     />
                   ) : (
-                    <>{!isSignIn && <ImageUpload onUpload={(url) => field.onChange(url)} />}</>
+                    <>{!isSignIn && <ImageUpload onFileUplload={field.onChange} type="file" variant="dark" accept="image/*"  />}</>
                   )}
                   {fieldState.invalid && (
                     <FieldError

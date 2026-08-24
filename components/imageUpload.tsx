@@ -1,15 +1,23 @@
 "use client";
 import {
+  
   ImageKitAbortError,
   ImageKitInvalidRequestError,
   ImageKitProvider,
+  Image,
   ImageKitServerError,
   ImageKitUploadNetworkError,
   upload,
+  Video,
+  buildSrc,
 } from "@imagekit/next";
 import { Button } from "./ui/button";
 import config from "@/lib/config";
 import { useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Input } from "./ui/input";
+import { ImageIcon, VideoIcon } from "lucide-react";
+import { toast } from "./ui/toast";
 
 const {
   env: {
@@ -37,12 +45,13 @@ interface ImageUploadProps {
   placeholder: string;
   folder: "string";
   variant: "dark" | "light";
-  onFileUplload: (filepath: string) => void;
+  onFileUplload: (value: string) => void;
 }
 
 const ImageUpload = ({
   type,
   accept,
+
   placeholder,
   folder,
   variant,
@@ -56,20 +65,22 @@ const ImageUpload = ({
     button:
       variant === "dark"
         ? "bg-dark-300"
-        : "bg-light-600 border-gray-100 border",
+        : "bg-light-800 border-gray-100 border",
     placeholder: variant === "dark" ? "text-light-100" : "text-slate-500",
     text: variant === "dark" ? "text-light-100" : "text-dark-400",
   };
   const abortController = new AbortController();
+  const [Uploaded, setUploaded] = useState(null);
+  const [filePicked, setFilePicked] = useState(null);
   const handleUpload = async () => {
     // Access the file input element using the ref
+    setUploaded(null);
     const fileInput = fileInputRef.current;
     if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-      alert("Please select a file to upload");
+      toast.add({ description: "Please select a file to upload" });
       return;
     }
     const file = fileInput.files[0];
-
     let authParams;
     try {
       authParams = await authenticator();
@@ -88,6 +99,7 @@ const ImageUpload = ({
         publicKey,
         file,
         fileName: file.name,
+        useUniqueFileName: true,
         onProgress: (event) => {
           setProgress((event.loaded / event.total) * 100);
         },
@@ -95,6 +107,7 @@ const ImageUpload = ({
       });
       console.log("Upload response:", uploadResponse);
       onFileUplload?.(uploadResponse.url!);
+      setUploaded(uploadResponse.url);
     } catch (error) {
       if (error instanceof ImageKitAbortError) {
         console.error("Upload aborted:", error.reason);
@@ -114,15 +127,54 @@ const ImageUpload = ({
     <div className="rounded-xs flex flex-col gap-2">
       <ImageKitProvider urlEndpoint={urlEndpoint}>
         <>
-          <button className="form-input bg-zinc-600 flex items-center justify-center">
-            <input type="file" ref={fileInputRef} />
+          <button
+            className={cn(
+              styles.button,
+              "flex flex-col justify-center items-center book-form_input",
+            )}
+            onClick={() => {
+              fileInputRef.current?.click();
+            }}
+          >
+            {accept == "image/*" ? <ImageIcon /> : <VideoIcon />}
+            {filePicked && <p className="upload-filename">{filePicked}</p>}
+
+            <input
+              type={type}
+              ref={fileInputRef}
+              hidden
+              accept={accept}
+              className={cn(
+                styles.placeholder,
+                "item-center book-form_input flex justify-between",
+              )}
+              onChange={(e) => {
+                setFilePicked(e.target.files[0].name);
+              }}
+            />
           </button>
-          <Button type="button" onClick={handleUpload}>
-            Upload file
+          <Button hidden={!filePicked} onClick={handleUpload}>
+            Upload {accept == "image/*" ? "Image" : "Video"}
           </Button>
+          {(100>progress && progress>0) && <div className="flex items-center justify-center font-semibold text-sm">Upload Progress: 
+          <progress className="mx-3" value={progress} max={100}></progress>{Math.round(progress)} % </div>}
+          {Uploaded &&<>{accept == "image/*" ? <Image src={Uploaded} width={100} height={100}/>:<Video
+  src={Uploaded}
+  controls
+  preload="none"
+  poster={buildSrc({
+    src: Uploaded,
+    transformation: [
+      {
+        format: "jpg",
+        startOffset: "2",
+      },
+    ],
+  })}
+/>}</>}
           <br />
-          Upload progress: <progress value={progress} max={100}></progress>
         </>
+        
       </ImageKitProvider>
     </div>
   );

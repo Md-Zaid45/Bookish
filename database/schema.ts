@@ -46,7 +46,7 @@ export const books = pgTable("books", {
   coverColor: varchar("cover_color", { length: 7 }).notNull(),
   coverUrl: text("cover_url").notNull(),
   videoUrl: text("video_url").notNull(),
-  summary: varchar("description", { length: 255 }).notNull(),
+  summary: varchar("summary", { length: 255 }).notNull(),
   availableCopies: integer("available_copies").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

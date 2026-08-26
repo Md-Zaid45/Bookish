@@ -15,10 +15,10 @@ export const signInSchema = z.object({
 
 export const bookSchema= z.object({
 title:z.string().trim().min(2).max(100),
-decription:z.string().trim().min(10).max(200),
+description:z.string().trim().min(10).max(200),
 author:z.string().trim().min(3).max(20),
 genre:z.string().trim().min(3).max(50),
-ratings:z.number().min(1).max(5),
+rating:z.coerce.number().min(1).max(5),
 totalCopies:z.coerce.number().int().positive().lte(10000),
 coverUrl:z.string().nonempty(),
 coverColor:z.string().trim().regex(/^#[0-9A-F]{6}$/i),

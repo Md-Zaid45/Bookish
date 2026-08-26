@@ -25,24 +25,29 @@ const BookForm = ({ type }: Props) => {
     resolver: zodResolver(bookSchema),
     defaultValues: {
       title: "",
-      decription: "",
+      description: "",
       author: "",
       genre: "",
-      ratings: 1,
+      rating: 1,
       totalCopies: 0,
-      coverUrl: "",
-      coverColor: "",
-      videoUrl: "",
+      coverUrl: " ",
+      coverColor: "#000000",
+      videoUrl: " ",
       summary: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof bookSchema>) => {
-    const res=await createBook(values)
+    console.log("Submit response", values);
+
+    const res = await createBook(values);
   };
   return (
     <div className="">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className=""
+      >
         <FieldGroup>
           <Controller
             name="title"
@@ -149,7 +154,7 @@ const BookForm = ({ type }: Props) => {
             )}
           />
           <Controller
-            name="ratings"
+            name="rating"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -218,7 +223,10 @@ const BookForm = ({ type }: Props) => {
                   type="file"
                   placeholder="Uplade the book cover image"
                   accept="image/*"
-                  onFileUplload={field.onChange}
+                  onFileUplload={(url) => {
+                    console.log("book form ", form.getValues());
+                    field.onChange(url);
+                  }}
                   variant="light"
                 />
 
@@ -241,7 +249,10 @@ const BookForm = ({ type }: Props) => {
                   Cover color
                 </FieldLabel>
 
-                <ColorPicker value={field.value} onPickerChnage={field.onChange}/>
+                <ColorPicker
+                  value={field.value}
+                  onPickerChnage={field.onChange}
+                />
                 {fieldState.invalid && (
                   <FieldError
                     className="font-semibold text-xs "

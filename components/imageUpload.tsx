@@ -1,6 +1,5 @@
 "use client";
 import {
-  
   ImageKitAbortError,
   ImageKitInvalidRequestError,
   ImageKitProvider,
@@ -15,7 +14,6 @@ import { Button } from "./ui/button";
 import config from "@/lib/config";
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Input } from "./ui/input";
 import { ImageIcon, VideoIcon } from "lucide-react";
 import { toast } from "./ui/toast";
 
@@ -149,32 +147,45 @@ const ImageUpload = ({
                 "item-center book-form_input flex justify-between",
               )}
               onChange={(e) => {
-                setFilePicked(e.target.files[0].name);
+                setFilePicked(e.target?.files[0]?.name);
+                console.log('file name',e.target?.files[0]?.name,)
               }}
             />
           </button>
           <Button hidden={!filePicked} onClick={handleUpload}>
             Upload {accept == "image/*" ? "Image" : "Video"}
           </Button>
-          {(100>progress && progress>0) && <div className="flex items-center justify-center font-semibold text-sm">Upload Progress: 
-          <progress className="mx-3" value={progress} max={100}></progress>{Math.round(progress)} % </div>}
-          {Uploaded &&<>{accept == "image/*" ? <Image src={Uploaded} width={100} height={100}/>:<Video
-  src={Uploaded}
-  controls
-  preload="none"
-  poster={buildSrc({
-    src: Uploaded,
-    transformation: [
-      {
-        format: "jpg",
-        startOffset: "2",
-      },
-    ],
-  })}
-/>}</>}
+          {100 > progress && progress > 0 && (
+            <div className="flex items-center justify-center font-semibold text-sm">
+              Upload Progress:
+              <progress className="mx-3" value={progress} max={100}></progress>
+              {Math.round(progress)} %{" "}
+            </div>
+          )}
+          {Uploaded && (
+            <>
+              {accept == "image/*" ? (
+                <Image src={Uploaded} width={200} height={200} alt="Uploaded preview" />
+              ) : (
+                <Video
+                  src={Uploaded}
+                  controls
+                  preload="none"
+                  poster={buildSrc({
+                    src: Uploaded,
+                    transformation: [
+                      {
+                        format: "jpg",
+                        startOffset: "2",
+                      },
+                    ],
+                  })}
+                />
+              )}
+            </>
+          )}
           <br />
         </>
-        
       </ImageKitProvider>
     </div>
   );

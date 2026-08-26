@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import BookCoverSvg from "./BookCoverSvg (1)";
+import { Image, ImageKitProvider } from "@imagekit/next";
+import config from "@/lib/config";
 
 type BookCoverVarient = "extraSmall" | "small" | "medium" | "regular" | "wide";
 
@@ -19,15 +20,38 @@ interface Props {
   coverImage: string;
 }
 
-const Bookcover = ({ variant='regular', className, coverColor='012B48', coverImage='https://placehold.co/400x600.png' }:Props) => {
-  return <div className={cn("relative transition-all duration-300",variantStyles[variant], className)}>
-  <BookCoverSvg coverColor={coverColor} />
-  <div className="absolute z-10"
-  style={{left:"12%", width:"87.5%", height:"88%"}}
-  >
-  <Image src={coverImage} alt="Book-cover" fill className="rounded-sm object-fill"/>
-  </div>
-  </div>
+const Bookcover = ({
+  variant = "regular",
+  className,
+  coverColor = "012B48",
+  coverImage = "https://placehold.co/400x600.png",
+}: Props) => {
+  return (
+    <div
+      className={cn(
+        "relative transition-all duration-300",
+        variantStyles[variant],
+        className,
+      )}
+    >
+      <BookCoverSvg coverColor={coverColor} />
+      <div
+        className="absolute z-10"
+        style={{ left: "12%", width: "87.5%", height: "88%" }}
+      >
+        <ImageKitProvider urlEndpoint={config.env.imagekit.urlEndpoint}>
+          <Image
+            src={coverImage}
+            alt="Book-cover"
+            fill
+            className="rounded-sm object-fill"
+            loading="lazy"
+           
+          />
+        </ImageKitProvider>
+      </div>
+    </div>
+  );
 };
 
 export default Bookcover;

@@ -5,14 +5,14 @@ import Image from "next/image"
 import { Button } from "./ui/button"
 
 interface props{
-  id:number, title:string, genre:string, color:string, cover:string, isLoanedBook?:boolean
+  id:string, title:string, genre:string, coverColor:string, coverUrl:string, isLoanedBook?:boolean
 }
-const BookCard=({id, title, genre, color, cover,isLoanedBook=false}:props)=>{
+const BookCard=({id, title, genre, coverColor, coverUrl,isLoanedBook=false}:props)=>{
   return <li className={cn(isLoanedBook && 'xs:w-52 w-full')}>
 <Link href={`/books/${id}`}
 className={cn(isLoanedBook && 'w-full flex flex-col item-center')}
 >
-<Bookcover coverColor={color} coverImage={cover} variant="regular"></Bookcover>
+<Bookcover coverColor={coverColor} coverImage={coverUrl} variant="regular"></Bookcover>
 <div className={cn('mt-4', !isLoanedBook && 'xs:max-w-40 max-w-28')}>
  <p className="book-title">{title}</p>
  <p className="book-genre">{genre}</p>

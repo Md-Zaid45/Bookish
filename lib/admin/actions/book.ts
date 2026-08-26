@@ -1,3 +1,5 @@
+"use server";
+
 import { db } from "@/database/drizzle";
 import { books } from "@/database/schema";
 

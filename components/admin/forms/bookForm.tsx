@@ -221,7 +221,6 @@ const BookForm = ({ type }: Props) => {
 
                 <ImageUpload
                   type="file"
-                  placeholder="Uplade the book cover image"
                   accept="image/*"
                   onFileUplload={(url) => {
                     console.log("book form ", form.getValues());
@@ -275,7 +274,6 @@ const BookForm = ({ type }: Props) => {
                 <ImageUpload
                   type="file"
                   accept="video/*"
-                  placeholder="Upload book trailer video"
                   variant="light"
                   onFileUplload={field.onChange}
                 />

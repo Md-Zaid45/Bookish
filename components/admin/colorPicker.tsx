@@ -1,6 +1,10 @@
 import { HexColorInput, HexColorPicker } from "react-colorful";
 
-const ColorPicker = ({ value, onPickerChnage }) => {
+interface props{
+  value:string, onPickerChnage:()=>void
+}
+
+const ColorPicker = ({ value, onPickerChnage }:props) => {
   return (
     <div className="flex-col ">
       <div className="flex items-baseline">

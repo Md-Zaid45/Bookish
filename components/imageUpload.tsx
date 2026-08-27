@@ -38,10 +38,8 @@ const authenticator = async () => {
   }
 };
 interface ImageUploadProps {
-  type: "video" | "image";
-  accept: "string";
-  placeholder: string;
-  folder: "string";
+  type: string;
+  accept: string;
   variant: "dark" | "light";
   onFileUplload: (value: string) => void;
 }
@@ -49,9 +47,6 @@ interface ImageUploadProps {
 const ImageUpload = ({
   type,
   accept,
-
-  placeholder,
-  folder,
   variant,
   onFileUplload,
 }: ImageUploadProps) => {
@@ -68,8 +63,8 @@ const ImageUpload = ({
     text: variant === "dark" ? "text-light-100" : "text-dark-400",
   };
   const abortController = new AbortController();
-  const [Uploaded, setUploaded] = useState(null);
-  const [filePicked, setFilePicked] = useState(null);
+  const [Uploaded, setUploaded] = useState<string | null>(null);
+  const [filePicked, setFilePicked] = useState<string | null>(null);
   const handleUpload = async () => {
     // Access the file input element using the ref
     setUploaded(null);
@@ -105,7 +100,7 @@ const ImageUpload = ({
       });
       console.log("Upload response:", uploadResponse);
       onFileUplload?.(uploadResponse.url!);
-      setUploaded(uploadResponse.url);
+      setUploaded(uploadResponse.url ?? null);
     } catch (error) {
       if (error instanceof ImageKitAbortError) {
         console.error("Upload aborted:", error.reason);
@@ -147,8 +142,8 @@ const ImageUpload = ({
                 "item-center book-form_input flex justify-between",
               )}
               onChange={(e) => {
-                setFilePicked(e.target?.files[0]?.name);
-                console.log('file name',e.target?.files[0]?.name,)
+                setFilePicked(e.target?.files?.[0]?.name ?? null);
+                console.log('file name',e.target?.files?.[0]?.name)
               }}
             />
           </button>
@@ -172,6 +167,7 @@ const ImageUpload = ({
                   controls
                   preload="none"
                   poster={buildSrc({
+                    urlEndpoint,
                     src: Uploaded,
                     transformation: [
                       {

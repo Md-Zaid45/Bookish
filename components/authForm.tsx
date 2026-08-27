@@ -66,7 +66,6 @@ const AuthForm = <T extends FieldValues>({
       toast.add({
         title:`Error ${isSignIn? "signing in": "signing up"}`,
         description:`${result.error}`,
-        variant:'destructive'
       })
     }
   };
@@ -95,7 +94,7 @@ const AuthForm = <T extends FieldValues>({
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={val} className="font-light">
-                    {FIELD_NAMES[val]}
+                    {FIELD_NAMES[val as keyof typeof FIELD_NAMES]}
                   </FieldLabel>
 
                   {val != "universityCard" ? (

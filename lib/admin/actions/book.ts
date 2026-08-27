@@ -7,7 +7,8 @@ const createBook = async (params: BookParams) => {
   try {
     const newBook = await db
       .insert(books)
-      .values({ ...params, availableCopies: params.totalCopies });
+      .values({ ...params, availableCopies: params.totalCopies })
+      .returning();
 
     return {
       success: true,

@@ -42,11 +42,11 @@ export const books = pgTable("books", {
   genre: text("genre").notNull(),
   rating: integer("rating").notNull(),
   totalCopies: integer("total_copies").notNull(),
-  description: varchar("description", { length: 255 }).notNull(),
+  description: text("description").notNull(),
   coverColor: varchar("cover_color", { length: 7 }).notNull(),
   coverUrl: text("cover_url").notNull(),
   videoUrl: text("video_url").notNull(),
-  summary: varchar("summary", { length: 255 }).notNull(),
+  summary: text("summary").notNull(),
   availableCopies: integer("available_copies").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

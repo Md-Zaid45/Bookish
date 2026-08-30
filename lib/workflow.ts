@@ -1,4 +1,5 @@
 import { Client as WorkflowClient, WorkflowContext } from "@upstash/workflow";
+import { Client as QstashClient, resend } from "@upstash/qstash";
 import config from "./config";
 
 export const workflowClient = new WorkflowClient({
@@ -6,22 +7,23 @@ export const workflowClient = new WorkflowClient({
   token: config.env.upstash.qstashToken,
 });
 
+const client = new QstashClient({ token: config.env.upstash.qstashToken });
+
 export const sendEmail = async (
-  context: WorkflowContext<{ email: string }>,
-  message: string,
   email: string,
+  subject: string,
+  html: string,
 ) => {
-  console.log(`Sending ${message} email to ${email}`);
-  const { status, body } = await context.api.resend.call("Call Resend", {
-    token: process.env.RESEND_API_KEY!,
+  await client.publishJSON({
+    api: {
+      name: "email",
+      provider: resend({ token: config.env.resend.resendToken! }),
+    },
     body: {
       from: "Acme <onboarding@resend.dev>",
       to: [email],
-      subject: "Hello World",
-      html: `<p>${message}</p>`,
-    },
-    headers: {
-      "content-type": "application/json",
+      subject: subject,
+      html: html,
     },
   });
 };

@@ -1,45 +1,57 @@
-import { sendEmail } from "@/lib/workflow"
-import { WorkflowContext } from "@upstash/workflow"
-import { serve } from "@upstash/workflow/nextjs"
+import { auth } from "@/auth";
+import { db } from "@/database/drizzle";
+import { users } from "@/database/schema";
+import { sendEmail } from "@/lib/workflow";
+import { serve } from "@upstash/workflow/nextjs";
+import { eq } from "drizzle-orm";
 
 type InitialData = {
-  email: string
-}
+  email: string;
+  fullName: string;
+};
+
+const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
+const THREE_DAY_IN_MS = ONE_DAY_IN_MS * 3;
+const THIRTY_DAY_IN_MS = THREE_DAY_IN_MS * 10;
 
 export const { POST } = serve<InitialData>(async (context) => {
-  const { email } = context.requestPayload
+  const { email } = context.requestPayload;
 
   await context.run("new-signup", async () => {
-    await sendEmail(context,"Welcome to the platform", email)
-  })
+    await sendEmail(email, "Welcome to the platform", `Welcome to the Bookish, Enjoy the ease of learning with our wide variety of books`);
+  });
 
-  await context.sleep("wait-for-3-days", 60 * 60 * 24 * 3)
+  await context.sleep("wait-for-3-days", THREE_DAY_IN_MS);
 
   while (true) {
     const state = await context.run("check-user-state", async () => {
-      return await getUserState()
-    })
+      return await getUserState(email);
+    });
 
     if (state === "non-active") {
       await context.run("send-email-non-active", async () => {
-        await sendEmail(context,"Email to non-active users", email)
-      })
+        await sendEmail(email, "Hey, where are you", `Dont miss out learning, Learn new everyday`);
+      });
     } else if (state === "active") {
       await context.run("send-email-active", async () => {
-        await sendEmail(context,"Send newsletter to active users", email)
-      })
+        await sendEmail(email, "Welcome Back", `Welcome  Back to the Bookish, We've missed you`);
+      });
     }
 
-    await context.sleep("wait-for-1-month", 60 * 60 * 24 * 30)
+    await context.sleep("wait-for-1-month", THIRTY_DAY_IN_MS);
   }
-})
+});
 
+type UserState = "non-active" | "active";
 
+const getUserState = async (email:string): Promise<UserState> => {
+  const user = await db.select().from(users).where(eq(users.email,email))
+  if(user.length === 0) return 'non-active'
 
-type UserState = "non-active" | "active"
+  const lastActivity = new Date(user[0].lastActivityDate!)
+  const now = new Date()
+  const timeDiff = now.getTime()-lastActivity.getTime()
 
-const getUserState = async (): Promise<UserState> => {
-  // Implement user state logic here
-  return "non-active"
-}
-
+  if(timeDiff>THREE_DAY_IN_MS && timeDiff<=THIRTY_DAY_IN_MS) return "non-active"
+  return "active";
+};

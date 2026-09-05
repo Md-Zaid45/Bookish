@@ -56,6 +56,11 @@ export const signUp = async (params: AuthCredentials) => {
       universityId,
       universityCard,
     });
+
+    const isProd = process.env.NODE_ENV === "production";
+    const baseUrl = isProd
+      ? process.env.NEXT_PUBLIC_PROD_API_ENDPOINT
+      : process.env.NEXT_PUBLIC_API_ENDPOINT;
   } catch (error) {
     console.log("Signup error");
     return { success: false, error: "Signup error" };

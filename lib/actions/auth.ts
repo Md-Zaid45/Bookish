@@ -61,6 +61,11 @@ export const signUp = async (params: AuthCredentials) => {
     const baseUrl = isProd
       ? process.env.NEXT_PUBLIC_PROD_API_ENDPOINT
       : process.env.NEXT_PUBLIC_API_ENDPOINT;
+
+    await workflowClient.trigger({
+      url: `${baseUrl}/api/auth/workflow/onboarding`,
+      body: { email, fullName },
+    });
   } catch (error) {
     console.log("Signup error");
     return { success: false, error: "Signup error" };

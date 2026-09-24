@@ -1,7 +1,12 @@
 import Image from "next/image";
 import Bookcover from "./bookcover";
 import { Button } from "./ui/button";
+import BorrowButton from "./borrowButton";
 
+interface Props extends Book{
+  userId?:string
+  userStatus?:string | null
+}
 const BookOverview = ({
   title,
   author,
@@ -12,7 +17,10 @@ const BookOverview = ({
   description,
   coverColor,
   coverUrl,
-}: Book) => {
+  id,
+  userId,
+  userStatus
+}: Props) => {
   console.log(coverUrl," book overview");
   
   return (
@@ -41,10 +49,12 @@ const BookOverview = ({
           </p>
         </div>
         <p className="book-description">{description}</p>
-        <Button className="book-overview_btn">
-          <Image src="/icons/book.svg" alt="book" width={20} height={20} />
-          <p className="font-bebas-neue text-xl text-dark-100">Borrow</p>
-        </Button>
+        <BorrowButton
+          bookId={id}
+          userId={userId}
+          userStatus={userStatus}
+          availableCopies={availableCopies}
+        />
       </div>
       <div className="relative flex flex-1 justify-center">
         <div className="relative">

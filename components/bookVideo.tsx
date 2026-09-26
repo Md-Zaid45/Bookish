@@ -1,24 +1,21 @@
+"use client";
+
 import config from "@/lib/config";
 import { Video } from "@imagekit/next";
+import { buildVideoPoster } from "@/lib/video";
 
-const BookVideo = ({url}:{url:string}) => {
+const BookVideo = ({ url }: { url: string }) => {
+  if (!url?.trim()) return null;
+
   return (
     <div>
       <Video
-      urlEndpoint={config.env.imagekit.urlEndpoint}
-        src={url}
+        urlEndpoint={config.env.imagekit.urlEndpoint}
+        src={url.trim()}
         controls
         preload="none"
-        // poster={buildSrc({
-        //   src: Uploaded,
-        //   transformation: [
-        //     {
-        //       format: "jpg",
-        //       startOffset: "2",
-        //     },
-        //   ],
-        // })}
-      />{" "}
+        poster={buildVideoPoster(url)}
+      />
     </div>
   );
 };

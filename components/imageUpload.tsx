@@ -8,10 +8,10 @@ import {
   ImageKitUploadNetworkError,
   upload,
   Video,
-  buildSrc,
 } from "@imagekit/next";
 import { Button } from "./ui/button";
 import config from "@/lib/config";
+import { buildVideoPoster } from "@/lib/video";
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ImageIcon, VideoIcon } from "lucide-react";
@@ -166,16 +166,7 @@ const ImageUpload = ({
                   src={Uploaded}
                   controls
                   preload="none"
-                  poster={buildSrc({
-                    urlEndpoint,
-                    src: Uploaded,
-                    transformation: [
-                      {
-                        format: "jpg",
-                        startOffset: "2",
-                      },
-                    ],
-                  })}
+                  poster={buildVideoPoster(Uploaded)}
                 />
               )}
             </>

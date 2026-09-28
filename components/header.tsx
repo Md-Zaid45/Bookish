@@ -13,6 +13,9 @@ const NAV_ITEMS = [
 
 const Header = ({ session }: { session: Session }) => {
   const pathname = usePathname();
+  const name = session?.user?.name?.trim() ?? "";
+  const initial = name ? name.charAt(0).toUpperCase() : "?";
+
   return (
     <header className="flex items-center justify-between gap-4">
       <Link href="/" className="group flex shrink-0 items-center gap-2">
@@ -51,8 +54,15 @@ const Header = ({ session }: { session: Session }) => {
               aria-label="My profile"
               className="flex items-center"
             >
-              <Avatar>
-                <AvatarFallback>{session?.user?.name}</AvatarFallback>
+              <Avatar
+                className={cn(
+                  "transition-shadow",
+                  pathname === "/my-profile" && "ring-2 ring-primary",
+                )}
+              >
+                <AvatarFallback className="bg-dark-600 font-semibold text-primary">
+                  {initial}
+                </AvatarFallback>
               </Avatar>
             </Link>
           </li>

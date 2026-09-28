@@ -15,6 +15,7 @@ const BookVideo = ({ url }: { url: string }) => {
         controls
         preload="none"
         poster={buildVideoPoster(url)}
+        className="aspect-video w-full rounded-xl bg-black object-contain"
       />
     </div>
   );

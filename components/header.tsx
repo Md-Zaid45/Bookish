@@ -23,7 +23,7 @@ const Header = ({ session }: { session: Session }) => {
           alt="Bookish logo"
           className="size-7 xs:size-8"
         />
-        <span className="font-bebas-neue text-xl capitalize text-light-100 xs:text-2xl">
+        <span className="font-bebas-neue text-xl capitalize text-light-100 transition-colors group-hover:text-light-200 xs:text-2xl">
           Bookish
         </span>
       </Link>
@@ -35,8 +35,10 @@ const Header = ({ session }: { session: Session }) => {
               <Link
                 href={item.href}
                 className={cn(
-                  `cursor-pointer text-base capitalize `,
-                  pathname == "/" ? "text-light-200" : "",
+                  "capitalize transition-colors",
+                  pathname === item.href
+                    ? "text-light-200"
+                    : "text-light-100 hover:text-light-200",
                 )}
               >
                 {item.label}
@@ -46,10 +48,8 @@ const Header = ({ session }: { session: Session }) => {
           <li>
             <Link
               href="/my-profile"
-              className={cn(
-                `cursor-pointer text-base capitalize `,
-                pathname == "/profile" ? "text-light-200" : "text-light-100",
-              )}
+              aria-label="My profile"
+              className="flex items-center"
             >
               <Avatar>
                 <AvatarFallback>{session?.user?.name}</AvatarFallback>

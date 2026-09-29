@@ -65,7 +65,9 @@ const Sidebar = ({ session }: { session: Session }) => {
       </div></div>
       <div className="user">
               <Avatar className=''>
-        <AvatarFallback>{session?.user?.name}</AvatarFallback>
+        <AvatarFallback>
+          {session?.user?.name?.trim()?.charAt(0).toUpperCase() || "?"}
+        </AvatarFallback>
       </Avatar>
       <div className="flex flex-col max-md:hidden">
         <p className="font-semibold text-dark-200">{session?.user?.name}</p>

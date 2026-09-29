@@ -2,7 +2,7 @@
 
 import config from "@/lib/config";
 import { Video } from "@imagekit/next";
-import { buildVideoPoster } from "@/lib/video";
+import { buildVideoPoster, VIDEO_PREVIEW_CLASSES } from "@/lib/video";
 
 const BookVideo = ({ url }: { url: string }) => {
   if (!url?.trim()) return null;
@@ -15,7 +15,7 @@ const BookVideo = ({ url }: { url: string }) => {
         controls
         preload="none"
         poster={buildVideoPoster(url)}
-        className="aspect-video w-full rounded-xl bg-black object-contain"
+        className={VIDEO_PREVIEW_CLASSES}
       />
     </div>
   );

@@ -1,6 +1,9 @@
 import config from "@/lib/config";
 import { buildSrc } from "@imagekit/next";
 
+export const VIDEO_PREVIEW_CLASSES =
+  "aspect-video w-full max-w-md rounded-xl bg-black object-contain";
+
 export const buildVideoPoster = (videoUrl: string) => {
   const path = videoUrl.trim().split("?")[0];
   const thumbnailPath = /\.(mp4|mov)$/i.test(path)

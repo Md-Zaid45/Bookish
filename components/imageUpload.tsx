@@ -11,7 +11,7 @@ import {
 } from "@imagekit/next";
 import { Button } from "./ui/button";
 import config from "@/lib/config";
-import { buildVideoPoster } from "@/lib/video";
+import { buildVideoPoster, VIDEO_PREVIEW_CLASSES } from "@/lib/video";
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ImageIcon, VideoIcon } from "lucide-react";
@@ -167,6 +167,7 @@ const ImageUpload = ({
                   controls
                   preload="none"
                   poster={buildVideoPoster(Uploaded)}
+                  className={VIDEO_PREVIEW_CLASSES}
                 />
               )}
             </>

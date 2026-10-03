@@ -6,10 +6,7 @@ import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Session } from "next-auth";
 
-const NAV_ITEMS = [
-  { label: "Library", href: "/" },
-  { label: "Search", href: "/" },
-];
+const NAV_ITEMS = [{ label: "Library", href: "/" }];
 
 const Header = ({ session }: { session: Session }) => {
   const pathname = usePathname();
@@ -17,7 +14,7 @@ const Header = ({ session }: { session: Session }) => {
   const initial = name ? name.charAt(0).toUpperCase() : "?";
 
   return (
-    <header className="flex items-center justify-between gap-4">
+    <header className="flex items-center justify-between gap-4 border-b border-white/5 pb-5">
       <Link href="/" className="group flex shrink-0 items-center gap-2">
         <Image
           src="/icons/logo.svg"
@@ -31,16 +28,16 @@ const Header = ({ session }: { session: Session }) => {
         </span>
       </Link>
 
-      <nav>
+      <nav className="flex flex-1 justify-center">
         <ul className="flex items-center gap-5 text-base xs:gap-8">
           {NAV_ITEMS.map((item) => (
             <li key={item.label}>
               <Link
                 href={item.href}
                 className={cn(
-                  "capitalize transition-colors",
+                  "relative capitalize transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
                   pathname === item.href
-                    ? "text-light-200"
+                    ? "text-light-200 after:w-full"
                     : "text-light-100 hover:text-light-200",
                 )}
               >

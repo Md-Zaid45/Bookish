@@ -319,7 +319,7 @@
 }
 
 @utility auth-box {
-  @apply gradient-vertical mx-auto flex max-w-xl flex-col gap-6 rounded-lg p-10;
+  @apply mx-auto flex max-w-xl flex-col gap-6 rounded-lg p-10;
 }
 
 @utility auth-illustration {

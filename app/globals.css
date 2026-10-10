@@ -280,8 +280,8 @@
     @apply bg-dark-300 hover:bg-dark-100 ;
   }
 
-  #pagination p {
-    @apply text-sm inline-flex items-center font-semibold px-4 py-1.5 rounded-md text-center;
+  #pagination > * {
+    @apply text-sm inline-flex items-center font-semibold px-4 py-1.5 rounded-md text-center cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   /* Sort */

@@ -39,3 +39,13 @@ interface BorrowBookParams{
   bookId:string;
   userId:string;
 }
+
+interface User{
+  id:string;
+  fullName:string;
+  email:string;
+  universityId:number;
+  status:"APPROVED"|"PENDING"|"REJECTED"|null;
+  role:"ADMIN"|"USER"|null;
+  createdAt:Date|null;
+}

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { count, desc } from "drizzle-orm";
 import { db } from "@/database/drizzle";
 import { users } from "@/database/schema";
@@ -40,7 +41,9 @@ const Page = async ({
       </div>
       <div className="mt-7 w-full overflow-hidden">
         <UsersTable users={allUsers} />
-        <Pagination currentPage={currentPage} totalPages={totalPages} />
+        <Suspense>
+          <Pagination currentPage={currentPage} totalPages={totalPages} />
+        </Suspense>
       </div>
     </section>
   );

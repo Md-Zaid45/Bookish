@@ -3,9 +3,9 @@ import BookCoverSvg from "./book-cover-svg";
 import { Image, ImageKitProvider } from "@imagekit/next";
 import config from "@/lib/config";
 
-type BookCoverVarient = "extraSmall" | "small" | "medium" | "regular" | "wide";
+type BookCoverVariant = "extraSmall" | "small" | "medium" | "regular" | "wide";
 
-const variantStyles: Record<BookCoverVarient, string> = {
+const variantStyles: Record<BookCoverVariant, string> = {
   extraSmall: "book-cover_extra_small",
   small: "book-cover_small",
   medium: "book-cover_medium",
@@ -15,7 +15,7 @@ const variantStyles: Record<BookCoverVarient, string> = {
 
 interface Props {
   className?: string;
-  variant?: BookCoverVarient;
+  variant?: BookCoverVariant;
   coverColor: string;
   coverImage: string;
 }

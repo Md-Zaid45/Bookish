@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import BookCoverSvg from "./BookCoverSvg (1)";
+import BookCoverSvg from "./book-cover-svg";
 import { Image, ImageKitProvider } from "@imagekit/next";
 import config from "@/lib/config";
 

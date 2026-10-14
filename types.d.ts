@@ -12,6 +12,7 @@ interface Book {
   videoUrl: string;
   summary: string;
   isLoanedBook?: boolean;
+  createdAt: Date | null;
 }
 
 interface AuthCredentials{

@@ -50,3 +50,34 @@ interface User{
   role:"ADMIN"|"USER"|null;
   createdAt:Date|null;
 }
+
+interface BorrowRecord{
+  id:string;
+  userId:string;
+  bookId:string;
+  borrowDate:Date;
+  dueDate:string;
+  returnDate:string|null;
+  status:"APPROVED"|"BORROWED"|"PENDING"|"REJECTED";
+  createdAt:Date|null;
+  user:{
+    fullName:string;
+    email:string;
+  };
+  book:{
+    title:string;
+    author:string;
+    coverColor:string;
+    coverUrl:string;
+  };
+}
+
+interface UpdateBookRequestParams{
+  recordId:string;
+  status:"APPROVED"|"REJECTED";
+}
+
+interface UpdateUserRequestParams{
+  userId:string;
+  status:"APPROVED"|"REJECTED";
+}

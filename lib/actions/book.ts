@@ -2,7 +2,7 @@
 
 import { db } from "@/database/drizzle";
 import { borrowRecords, books, users } from "@/database/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import dayjs from "dayjs";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
@@ -44,19 +44,33 @@ export const borrowBook = async (params: BorrowBookParams) => {
         error: "No book available",
       };
 
+    const existingRequest = await db
+      .select({ id: borrowRecords.id })
+      .from(borrowRecords)
+      .where(
+        and(
+          eq(borrowRecords.userId, sessionUserId),
+          eq(borrowRecords.bookId, bookId),
+          eq(borrowRecords.status, "PENDING"),
+        ),
+      )
+      .limit(1);
+
+    if (existingRequest.length > 0)
+      return {
+        success: false,
+        error: "You already have a pending request for this book",
+      };
+
     const dueDate = dayjs().add(7, "day").format("YYYY-MM-DD");
 
-    await db.batch([
-      db.insert(borrowRecords).values({
-        userId: sessionUserId,
-        bookId,
-        dueDate,
-      }),
-      db
-        .update(books)
-        .set({ availableCopies: book[0].availableCopies - 1 })
-        .where(eq(books.id, bookId)),
-    ]);
+    await db.insert(borrowRecords).values({
+      userId: sessionUserId,
+      bookId,
+      dueDate,
+      status: "PENDING",
+      createdAt: new Date(),
+    });
 
     revalidatePath(`/books/${bookId}`);
     revalidatePath("/");

@@ -13,7 +13,7 @@ interface Props {
   availableCopies: number;
 }
 
-type BorrowState = "idle" | "borrowing" | "borrowed";
+type BorrowState = "idle" | "borrowing" | "requested";
 
 const BorrowButton = ({ userId, bookId, userStatus, availableCopies }: Props) => {
   const [state, setState] = useState<BorrowState>("idle");
@@ -53,14 +53,19 @@ const BorrowButton = ({ userId, bookId, userStatus, availableCopies }: Props) =>
     const result = await borrowBook({ userId, bookId });
 
     if (result?.success) {
-      setState("borrowed");
+      setState("requested");
+      toast.add({
+        type: "success",
+        title: "Request submitted",
+        description: "Your borrow request is pending admin approval",
+      });
       return;
     }
 
     setState("idle");
     toast.add({
       type: "error",
-      title: "Borrow failed",
+      title: "Request failed",
       description: result?.error || "No book available",
     });
   };
@@ -74,9 +79,9 @@ const BorrowButton = ({ userId, bookId, userStatus, availableCopies }: Props) =>
       <Image src="/icons/book.svg" alt="book" width={20} height={20} />
       <p className="font-bebas-neue text-xl text-dark-100">
         {state === "borrowing"
-          ? "Borrowing..."
-          : state === "borrowed"
-            ? "Borrowed"
+          ? "Requesting..."
+          : state === "requested"
+            ? "Requested"
             : "Borrow"}
       </p>
     </Button>

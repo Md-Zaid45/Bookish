@@ -12,6 +12,8 @@ interface Book {
   videoUrl: string;
   summary: string;
   isLoanedBook?: boolean;
+  dueDate?: string | null;
+  borrowStatus?: "APPROVED" | "BORROWED" | "PENDING" | "REJECTED";
   createdAt: Date | null;
 }
 

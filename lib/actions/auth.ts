@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import { db } from "@/database/drizzle";
 import { users } from "@/database/schema";
 import { hash } from "bcryptjs";
@@ -29,6 +29,10 @@ export const signInWithCredentials = async (
     console.log("SignIn error");
     return { success: false, error: "SignIn error" };
   }
+};
+
+export const logOut = async () => {
+  await signOut({ redirectTo: "/sign-in" });
 };
 
 export const signUp = async (params: AuthCredentials) => {

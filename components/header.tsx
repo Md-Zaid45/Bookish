@@ -1,20 +1,22 @@
 "use client";
 import { cn } from "@/lib/utils";
+import { logOut } from "@/lib/actions/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Session } from "next-auth";
-import { Search, X } from "lucide-react";
+import { LogOut, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "./ui/button";
 
-const NAV_ITEMS = [{ label: "Library", href: "/" }];
+const NAV_ITEMS = [
+  { label: "Library", href: "/" },
+  { label: "Profile", href: "/my-profile" },
+];
 
 const Header = ({ session }: { session: Session }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const name = session?.user?.name?.trim() ?? "";
-  const initial = name ? name.charAt(0).toUpperCase() : "?";
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -134,23 +136,22 @@ const Header = ({ session }: { session: Session }) => {
           </form>
         </div>
 
-        <Link
-          href="/my-profile"
-          aria-label="My profile"
-          title="My profile"
-          className="flex items-center rounded-full p-0.5 transition-shadow hover:ring-1 hover:ring-primary/60"
-        >
-          <Avatar
-            className={cn(
-              "transition-shadow",
-              pathname === "/my-profile" && "ring-2 ring-primary",
-            )}
+        <form action={logOut}>
+          <Button
+            type="submit"
+            variant="ghost"
+            size="icon"
+            aria-label="Log out"
+            title={
+              session?.user?.name
+                ? `Log out (${session.user.name})`
+                : "Log out"
+            }
+            className="size-10 rounded-full bg-dark-300/60 text-light-100 ring-1 ring-inset ring-transparent transition-all hover:bg-dark-600/60 hover:text-primary"
           >
-            <AvatarFallback className="bg-dark-600 font-semibold text-primary">
-              {initial}
-            </AvatarFallback>
-          </Avatar>
-        </Link>
+            <LogOut className="size-[18px]" />
+          </Button>
+        </form>
       </div>
     </header>
   );

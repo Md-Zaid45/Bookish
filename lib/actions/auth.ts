@@ -1,6 +1,7 @@
 "use server";
 
 import { signIn, signOut } from "@/auth";
+import { AuthError } from "next-auth";
 import { db } from "@/database/drizzle";
 import { users } from "@/database/schema";
 import { hash } from "bcryptjs";
@@ -26,7 +27,14 @@ export const signInWithCredentials = async (
     if (!result) return { success: false, error: "SignIn error" };
     return { success: true };
   } catch (error) {
-    console.log("SignIn error");
+    if (error instanceof AuthError) {
+      if (error.type === "CredentialsSignin") {
+        return { success: false, error: "Incorrect email or password" };
+      }
+      console.error("SignIn failed:", error.type, error.message, error.cause);
+      return { success: false, error: "Unable to sign in, please try again" };
+    }
+    console.error("Unexpected signIn error:", error);
     return { success: false, error: "SignIn error" };
   }
 };

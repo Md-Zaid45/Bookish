@@ -25,7 +25,12 @@ export const signInWithCredentials = async (
       redirect: false,
     });
     if (!result) return { success: false, error: "SignIn error" };
-    return { success: true };
+    const user = await db
+      .select({ role: users.role })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+    return { success: true, role: user[0]?.role ?? "USER" };
   } catch (error) {
     if (error instanceof AuthError) {
       if (error.type === "CredentialsSignin") {

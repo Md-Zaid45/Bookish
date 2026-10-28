@@ -3,7 +3,9 @@ import BookList from "@/components/booklist";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { db } from "@/database/drizzle";
 import { books, borrowRecords, users } from "@/database/schema";
+import config from "@/lib/config";
 import { cn } from "@/lib/utils";
+import { Image, ImageKitProvider } from "@imagekit/next";
 import { desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
@@ -63,7 +65,6 @@ const MyProfile = async () => {
     { label: "Books borrowed", value: activeBooks },
     { label: "Member since", value: formatDate(user.createdAt) },
     { label: "Last active", value: formatDate(user.lastActivityDate) },
-    { label: "University card", value: user.universityCard },
   ];
 
   return (
@@ -106,6 +107,24 @@ const MyProfile = async () => {
             </div>
           ))}
         </dl>
+
+        {user.universityCard && (
+          <div className="mt-7">
+            <h2 className="text-xs uppercase tracking-wide text-light-100/50">
+              University card
+            </h2>
+            <ImageKitProvider urlEndpoint={config.env.imagekit.urlEndpoint}>
+              <Image
+                src={user.universityCard}
+                alt="University card"
+                width={320}
+                height={200}
+                loading="lazy"
+                className="mt-2 h-auto w-full max-w-xs rounded-lg object-cover ring-1 ring-white/10"
+              />
+            </ImageKitProvider>
+          </div>
+        )}
       </section>
 
       {borrowedBooks.length > 0 ? (

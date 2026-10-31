@@ -113,6 +113,7 @@ const MyProfile = async () => {
             <h2 className="text-xs uppercase tracking-wide text-light-100/50">
               University card
             </h2>
+
             <ImageKitProvider urlEndpoint={config.env.imagekit.urlEndpoint}>
               <Image
                 src={user.universityCard}

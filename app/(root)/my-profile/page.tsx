@@ -69,7 +69,7 @@ const MyProfile = async () => {
 
   return (
     <div className="flex w-full flex-col gap-10">
-      <section className="w-full rounded-2xl bg-dark-300/70 p-6 ring-1 ring-white/5 xs:p-8">
+      <section className="w-full">
         <div className="flex flex-wrap items-center gap-5">
           <Avatar size="lg" className="size-16">
             <AvatarFallback className="bg-dark-600 text-2xl font-semibold text-primary">

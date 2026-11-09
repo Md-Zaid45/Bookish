@@ -166,6 +166,15 @@
     @apply mt-10 flex flex-wrap gap-5 max-xs:justify-between xs:gap-10;
   }
 
+  /* Book Row - horizontal scroll */
+  .book-row {
+    @apply mt-10 flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-1 xs:gap-8;
+  }
+
+  .book-row > li {
+    @apply w-[114px] shrink-0 snap-start xs:w-[174px];
+  }
+
   /* Book Overview */
   .book-overview {
     @apply flex flex-col-reverse items-center gap-12 sm:gap-32 xl:flex-row xl:gap-8;

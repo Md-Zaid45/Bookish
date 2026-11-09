@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
-import BookList from "@/components/booklist";
 import BookOverview from "@/components/bookOverview";
-import { sampleBooks } from "@/constants";
+import BookRow from "@/components/bookRow";
 import { db } from "@/database/drizzle";
 import { books, users } from "@/database/schema";
 import { desc, eq } from "drizzle-orm";
@@ -20,13 +19,13 @@ export default async function Home() {
   const latestBooks = (await db.select().from(books).limit(10).orderBy(desc(books.createdAt)
   )) as Book[]
   return (
-    <div>
+    <div className="flex w-full min-w-0 flex-col">
       <BookOverview
         {...latestBooks[0]}
         userId={userId}
         userStatus={userStatus}
       />
-      <BookList
+      <BookRow
         title="Latest Books"
         books={latestBooks.slice(1)}
         containerClassName="mt-20"

@@ -1,9 +1,13 @@
 import BookOverview from "@/components/bookOverview";
+import BookRow from "@/components/bookRow";
 import BookVideo from "@/components/bookVideo";
 import { db } from "@/database/drizzle";
 import { books, users } from "@/database/schema";
+import { getSimilarBooks } from "@/lib/recommend";
 import { eq } from "drizzle-orm";
 import { auth } from "@/auth";
+
+const SIMILAR_LIMIT = 8;
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
@@ -23,6 +27,8 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           .limit(1)
       )[0]?.status
     : undefined;
+
+  const similarBooks = (await getSimilarBooks(id, SIMILAR_LIMIT)) as unknown as Book[];
 
   return (
     <div>
@@ -45,6 +51,13 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           </section>
         </div>
       </div>
+      {similarBooks.length > 0 && (
+        <BookRow
+          title="Similar Books"
+          books={similarBooks}
+          containerClassName="mt-14"
+        />
+      )}
     </div>
   );
 };

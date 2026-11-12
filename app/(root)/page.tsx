@@ -3,7 +3,8 @@ import BookOverview from "@/components/bookOverview";
 import BookRow from "@/components/bookRow";
 import { db } from "@/database/drizzle";
 import { books, borrowRecords, users } from "@/database/schema";
-import { asc, count, desc, eq, gt } from "drizzle-orm";
+import { getRecommendedBooks } from "@/lib/recommend";
+import { asc, count, desc, eq } from "drizzle-orm";
 
 const SECTION_LIMIT = 12;
 const GENRE_SECTION_LIMIT = 3;
@@ -33,12 +34,7 @@ export default async function Home() {
         .from(books)
         .orderBy(desc(books.rating), asc(books.createdAt))
         .limit(SECTION_LIMIT),
-      db
-        .select()
-        .from(books)
-        .where(gt(books.availableCopies, 0))
-        .orderBy(desc(books.rating), desc(books.createdAt))
-        .limit(SECTION_LIMIT),
+      getRecommendedBooks(userId, SECTION_LIMIT),
       db
         .select({ book: books, borrowCount: count(borrowRecords.id) })
         .from(books)
@@ -53,7 +49,8 @@ export default async function Home() {
         .orderBy(desc(count()), desc(books.genre))
         .limit(GENRE_SECTION_LIMIT),
     ]);
-
+  console.log('recommnndedbooks..........',recommendedBooks);
+  
   const trendingBooks = trendingRows.map((row) => row.book as Book);
 
   const genreSections = await Promise.all(
@@ -84,7 +81,7 @@ export default async function Home() {
       />
       <BookRow
         title="Recommended For You"
-        books={recommendedBooks as Book[]}
+        books={recommendedBooks as unknown as Book[]}
         containerClassName="mt-14"
       />
       <BookRow

@@ -1,0 +1,2 @@
+ALTER TABLE "book_embeddings" ALTER COLUMN "embedding" SET DATA TYPE vector(768) USING "embedding"::vector(768);--> statement-breakpoint
+ALTER TABLE "book_embeddings" ALTER COLUMN "model" SET DEFAULT 'gemini-embedding-001';

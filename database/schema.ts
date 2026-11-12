@@ -68,3 +68,11 @@ export const borrowRecords = pgTable("borrow_records", {
   status: BORROW_STATUS_ENUM("status").default("BORROWED").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }),
 });
+
+export const bookEmbeddings = pgTable("book_embeddings",{
+  id:uuid("id").notNull().primaryKey().defaultRandom().unique(),
+  bookId: uuid("book_id")
+    .references(() => books.id)
+    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }),
+})

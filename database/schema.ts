@@ -1,5 +1,7 @@
+import { sql } from "drizzle-orm";
 import {
   date,
+  index,
   integer,
   pgEnum,
   pgTable,
@@ -7,6 +9,7 @@ import {
   timestamp,
   unique,
   uuid,
+  vector,
   varchar,
 } from "drizzle-orm/pg-core";
 
@@ -69,10 +72,27 @@ export const borrowRecords = pgTable("borrow_records", {
   createdAt: timestamp("created_at", { withTimezone: true }),
 });
 
-export const bookEmbeddings = pgTable("book_embeddings",{
-  id:uuid("id").notNull().primaryKey().defaultRandom().unique(),
-  bookId: uuid("book_id")
-    .references(() => books.id)
-    .notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }),
-})
+export const bookEmbeddings = pgTable(
+  "book_embeddings",
+  {
+    id: uuid("id").notNull().primaryKey().defaultRandom().unique(),
+    bookId: uuid("book_id")
+      .references(() => books.id, { onDelete: "cascade" })
+      .notNull()
+      .unique(),
+    embedding: vector("embedding", { dimensions: 768 }).notNull(),
+    model: text("model").notNull().default("gemini-embedding-001"),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("book_embeddings_hnsw_idx").using(
+      "hnsw",
+      sql`${table.embedding} vector_cosine_ops`
+    ),
+  ]
+);

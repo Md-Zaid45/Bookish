@@ -15,7 +15,10 @@ const config = {
       qstashToken:process.env.QSTASH_TOKEN
     },
     resend:{
-      resendToken:process.env.RESEND_API_KEY
+      resendToken: process.env.RESEND_API_KEY
+    },
+    gemini: {
+      apiKey: process.env.GEMINI_API_KEY,
     }
   },
 };

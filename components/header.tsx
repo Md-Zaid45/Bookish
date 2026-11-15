@@ -47,7 +47,8 @@ const Header = ({ session }: { session: Session }) => {
     event.preventDefault();
     const term = query.trim();
     if (!term) return;
-    router.push(`/?query=${encodeURIComponent(term)}`);
+    router.push(`/search?query=${encodeURIComponent(term)}`);
+    closeSearch();
   };
 
   return (

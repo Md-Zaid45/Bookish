@@ -28,7 +28,7 @@ const HomeLayout = async ({ children }: { children: ReactNode }) => {
   });
   return (
     <main className="root-container">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto w-full max-w-7xl">
         <Header session={session}></Header>
         <div className="flex mt-20 pb-20 items-center">{children}</div>
       </div>

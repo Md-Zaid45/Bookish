@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils";
 const Pagination = ({
   currentPage,
   totalPages,
+  variant = "light",
 }: {
   currentPage: number;
   totalPages: number;
+  variant?: "light" | "dark";
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -21,10 +23,12 @@ const Pagination = ({
     router.push(`?${params.toString()}`);
   };
 
+  const baseBtn = variant === "dark" ? "pagination-btn_dark" : "pagination-btn_light";
+
   return (
     <div id="pagination" className="mt-7">
       <button
-        className="pagination-btn_light"
+        className={baseBtn}
         disabled={currentPage <= 1}
         onClick={() => goToPage(currentPage - 1)}
       >
@@ -35,8 +39,10 @@ const Pagination = ({
           key={page}
           className={cn(
             page === currentPage
-              ? "bg-primary-admin text-white hover:bg-primary-admin"
-              : "pagination-btn_light",
+              ? variant === "dark"
+                ? "bg-primary text-dark-400 hover:bg-primary"
+                : "bg-primary-admin text-white hover:bg-primary-admin"
+              : baseBtn,
           )}
           onClick={() => goToPage(page)}
         >
@@ -44,7 +50,7 @@ const Pagination = ({
         </button>
       ))}
       <button
-        className="pagination-btn_light"
+        className={baseBtn}
         disabled={currentPage >= totalPages}
         onClick={() => goToPage(currentPage + 1)}
       >

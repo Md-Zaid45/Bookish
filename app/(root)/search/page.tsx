@@ -1,8 +1,10 @@
 import BookList from "@/components/booklist";
+import Pagination from "@/components/admin/pagination";
 import { db } from "@/database/drizzle";
 import { books } from "@/database/schema";
-import { desc, ilike, or } from "drizzle-orm";
+import { count, desc, ilike, or } from "drizzle-orm";
 import { Search } from "lucide-react";
+import { Suspense } from "react";
 
 const RESULT_LIMIT = 24;
 
@@ -12,24 +14,34 @@ const escapeLike = (value: string) =>
 const SearchPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ query?: string }>;
+  searchParams: Promise<{ query?: string; page?: string }>;
 }) => {
-  const { query = "" } = await searchParams;
+  const { query = "", page = "1" } = await searchParams;
   const term = query.trim();
+
+  const whereClause = term
+    ? or(
+        ilike(books.title, `%${escapeLike(term)}%`),
+        ilike(books.author, `%${escapeLike(term)}%`),
+        ilike(books.genre, `%${escapeLike(term)}%`),
+      )
+    : undefined;
+
+  const [{ total }] = await db
+    .select({ total: count() })
+    .from(books)
+    .where(whereClause);
+  const totalPages = Math.max(1, Math.ceil(total / RESULT_LIMIT));
+  const currentPage = Math.min(Math.max(Number(page) || 1, 1), totalPages);
 
   const results: Book[] = term
     ? ((await db
         .select()
         .from(books)
-        .where(
-          or(
-            ilike(books.title, `%${escapeLike(term)}%`),
-            ilike(books.author, `%${escapeLike(term)}%`),
-            ilike(books.genre, `%${escapeLike(term)}%`),
-          ),
-        )
-        .orderBy(desc(books.rating), desc(books.createdAt))
-        .limit(RESULT_LIMIT)) as Book[])
+        .where(whereClause)
+        .orderBy(desc(books.rating), desc(books.createdAt), books.id)
+        .limit(RESULT_LIMIT)
+        .offset((currentPage - 1) * RESULT_LIMIT)) as Book[])
     : [];
 
   return (
@@ -59,11 +71,20 @@ const SearchPage = async ({
           Start typing to search the library.
         </p>
       ) : results.length > 0 ? (
-        <BookList
-          title={`Results for "${term}"`}
-          books={results}
-          containerClassName="mt-10"
-        />
+        <>
+          <BookList
+            title={`Results for "${term}"`}
+            books={results}
+            containerClassName="mt-10"
+          />
+          <Suspense>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              variant="dark"
+            />
+          </Suspense>
+        </>
       ) : (
         <section className="mt-10 w-full rounded-2xl border border-dashed border-white/10 p-10 text-center">
           <h2 className="font-bebas-neue text-3xl text-light-100">

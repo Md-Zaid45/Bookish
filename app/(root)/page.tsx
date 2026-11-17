@@ -49,7 +49,6 @@ export default async function Home() {
         .orderBy(desc(count()), desc(books.genre))
         .limit(GENRE_SECTION_LIMIT),
     ]);
-  console.log('recommnndedbooks..........',recommendedBooks);
   
   const trendingBooks = trendingRows.map((row) => row.book as Book);
 

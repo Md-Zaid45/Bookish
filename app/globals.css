@@ -238,7 +238,7 @@
   }
 
   .search-input {
-    @apply w-full border-none font-bold placeholder:font-normal text-white placeholder:text-light-100 focus-visible:ring-0 focus-visible:shadow-none ;
+    @apply w-full border-none font-bold placeholder:font-normal text-white placeholder:text-light-100  focus-visible:shadow-none ;
   }
 
   /* Book Receipt */

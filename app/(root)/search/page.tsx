@@ -49,7 +49,7 @@ const SearchPage = async ({
       <h1 className="font-bebas-neue text-4xl text-light-100">Search</h1>
 
       <form method="GET" action="/search" className="search">
-        <Search className="mr-3 size-5 shrink-0 text-light-100" />
+        <Search className="mr-3 size-5 shrink-0 text-light-100 outline-0 " />
         <input
           type="search"
           name="query"

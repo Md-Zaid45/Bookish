@@ -52,7 +52,7 @@ const Header = ({ session }: { session: Session }) => {
   };
 
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-white/5 pb-5">
+    <header className="flex items-center justify-between gap-4 py-4">
       <Link href="/" className="group flex shrink-0 items-center gap-2">
         <Image
           src="/icons/logo.svg"

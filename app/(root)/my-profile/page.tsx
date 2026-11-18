@@ -64,7 +64,7 @@ const MyProfile = async () => {
     { label: "Role", value: user.role ?? "USER" },
     { label: "Books borrowed", value: activeBooks },
     { label: "Member since", value: formatDate(user.createdAt) },
-    { label: "Last active", value: formatDate(user.lastActivityDate) },
+ //   { label: "Last active", value: formatDate(user.lastActivityDate) },
   ];
 
   return (

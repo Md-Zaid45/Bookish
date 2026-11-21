@@ -48,6 +48,23 @@ export const logOut = async () => {
   await signOut({ redirectTo: "/sign-in" });
 };
 
+const getWorkflowBaseUrl = () => {
+  if (process.env.NODE_ENV !== "production") {
+    return (process.env.NEXT_PUBLIC_API_ENDPOINT ?? "http://localhost:3000").replace(
+      /\/+$/,
+      "",
+    );
+  }
+
+  const vercelUrl =
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+  const url =
+    process.env.NEXT_PUBLIC_PROD_API_ENDPOINT ??
+    (vercelUrl ? `https://${vercelUrl}` : undefined);
+
+  return url?.replace(/\/+$/, "");
+};
+
 export const signUp = async (params: AuthCredentials) => {
   const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
   const { success } = await ratelimit.limit(ip);
@@ -66,26 +83,33 @@ export const signUp = async (params: AuthCredentials) => {
   const hashedPassword = await hash(password, 10);
 
   try {
-    const newUser = await db.insert(users).values({
+    await db.insert(users).values({
       fullName,
       email,
       password: hashedPassword,
       universityId,
       universityCard,
     });
+  } catch (error) {
+    console.error("Signup error:", error);
+    return { success: false, error: "Signup error" };
+  }
 
-    const isProd = process.env.NODE_ENV === "production";
-    const baseUrl = isProd
-      ? process.env.NEXT_PUBLIC_PROD_API_ENDPOINT
-      : process.env.NEXT_PUBLIC_API_ENDPOINT;
+  try {
+    const baseUrl = getWorkflowBaseUrl();
+
+    if (!baseUrl) {
+      console.error("Skipping onboarding workflow: no base URL configured");
+      return { success: true };
+    }
 
     await workflowClient.trigger({
       url: `${baseUrl}/api/auth/workflow/onboarding`,
       body: { email, fullName },
     });
   } catch (error) {
-    console.log("Signup error");
-    return { success: false, error: "Signup error" };
+    console.error("Onboarding workflow trigger failed:", error);
   }
+
   return { success: true };
 };

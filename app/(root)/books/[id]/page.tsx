@@ -6,6 +6,7 @@ import { books, users } from "@/database/schema";
 import { getSimilarBooks } from "@/lib/recommend";
 import { eq } from "drizzle-orm";
 import { auth } from "@/auth";
+import { notFound } from "next/navigation";
 
 const SIMILAR_LIMIT = 8;
 
@@ -18,6 +19,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     .from(books)
     .where(eq(books.id, id))
     .limit(1);
+  if (!bookDetails) notFound();
   const userStatus = userId
     ? (
         await db
